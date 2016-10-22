@@ -1,0 +1,50 @@
+##gnore this file##
+/logs/
+*.log.wf
+__*
+*~
+/target/
+/.vs/
+##filter databfile、sln file、configureFile##
+*.mdb  
+*.ldb  
+*.config   
+##class file##
+*.com  
+class  
+*.exe  
+*.o  
+*.so  
+# compression file
+*.7z  
+*.dmg  
+*.gz  
+*.iso  
+*.jar  
+*.rar  
+*.tar  
+*.zip  
+*.via
+*.tmp
+*.err
+# Logs and databases #  
+*.log  
+*.sql  
+*.sqlite  
+# OS generated files #  
+.DS_Store  
+.DS_Store?  
+._*  
+.Spotlight-V100  
+.Trashes  
+Icon?  
+ehthumbs.db  
+Thumbs.db 
+*.opendb
+*.sdf
+*.VC.*
+*.tlog
+*.obj
+*.pdb
+*.idb
+*.ilk
