@@ -15,6 +15,4 @@
     采用 $ 命名 文件, 意图就是表示 , 当前文件是私有文件, 不推荐使用.
     而 $ 字符是C中, 变量命名一个"特殊"字符. 
     更加详细版本 可以追踪下面地址 * 在 simplec scoroutine 协程库中更新
-      -> https://github.com/wangzhione/simplec/blob/master/simplec/module/service/include/scoroutine.h
-  
-
+[simplec scoroutine](https://github.com/wangzhione/simplec/blob/master/simplec/module/service/include/scoroutine.h)
