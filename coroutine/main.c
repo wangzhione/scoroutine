@@ -33,11 +33,11 @@ static void _test(void * sco) {
 	puts("********************_test e n d********************");
 }
 
-/*
- * 主逻辑, 主要测试多个协程之间的纠缠
- */
+//
+// 主逻辑, 主要测试多个协程之间的纠缠
+///
 int main(void) {
-	void * sco = sco_open();
+	scomng_t * sco = sco_open();
 	
 	puts("--------------------突然想起了什么,--------------------\n");
 	_test(sco);
