@@ -1,15 +1,8 @@
-﻿#if !defined(_H_SCOROUTINE$WINDS) && defined(_MSC_VER)
-#define _H_SCOROUTINE$WINDS
+﻿#if !defined(_H_SIMPLEC_SCOROUTINE$WINDS) && defined(_MSC_VER)
+#define _H_SIMPLEC_SCOROUTINE$WINDS
 
 #include "scoroutine.h"
 #include <Windows.h>
-#include <string.h>
-#include <stdlib.h>
-#include <assert.h>
-
-// 默认协程栈大小 和 初始化协程数量
-#define _INT_STACK		(256 * 1024)
-#define _INT_COROUTINE	(16)
 
 // 声明协程结构 和 协程管理器结构
 struct sco {
@@ -29,11 +22,11 @@ struct scomng {
 	int cnt;				// 当前存在的协程个数
 };
 
-/*
- * 开启协程系统函数, 并返回创建的协程管理器
- *			: 返回创建的协程对象
- */
-inline void * 
+//
+// sco_open - 开启协程系统函数, 并返回创建的协程管理器
+//			: 返回创建的协程对象
+//
+inline scomng_t
 sco_open(void) {
 	struct scomng * comng = malloc(sizeof(struct scomng));
 	assert(NULL != comng);
@@ -54,25 +47,24 @@ static inline void _sco_delete(struct sco * co) {
 	free(co);
 }
 
-/*
- * 关闭已经开启的协程系统函数
- *	sco		: sco_oepn 返回的当前协程中协程管理器
- */
-void 
-sco_close(void * sco) {
+//
+// sco_close - 关闭已经开启的协程系统函数
+// sco		: sco_oepn 返回的当前协程中协程管理器
+//
+void
+sco_close(scomng_t sco) {
 	int i = -1;
-	struct scomng * comng = sco;
-	while (++i < comng->cap) {
-		struct sco * co = comng->cos[i];
+	while (++i < sco->cap) {
+		struct sco * co = sco->cos[i];
 		if (co) {
 			_sco_delete(co);
-			comng->cos[i] = NULL;
+			sco->cos[i] = NULL;
 		}
 	}
 
-	free(comng->cos);
-	comng->cos = NULL;
-	free(comng);
+	free(sco->cos);
+	sco->cos = NULL;
+	free(sco);
 	// 切换当前协程系统变回默认的主线程, 关闭协程系统
 	ConvertFiberToThread();
 }
@@ -87,34 +79,33 @@ static inline struct sco * _sco_new(sco_f func, void * arg) {
 	return co;
 }
 
-/*
- * 创建一个协程, 此刻是就绪态
- *  sco		: 协程管理器
- *	func	: 协程体执行的函数体
- *  arg		: 协程体中传入的参数
- *			: 返回创建好的协程id
- */
-int 
-sco_create(void * sco, sco_f func, void * arg) {
+//
+// sco_create - 创建一个协程, 此刻是就绪态
+// sco		: 协程管理器
+// func		: 协程体执行的函数体
+// arg		: 协程体中传入的参数
+// return	: 返回创建好的协程id
+//
+int
+sco_create(scomng_t sco, sco_f func, void * arg) {
 	struct sco * co = _sco_new(func, arg);
-	struct scomng * comng = sco;
-	struct sco ** cos = comng->cos;
-	int cap = comng->cap;
+	struct sco ** cos = sco->cos;
+	int cap = sco->cap;
 	// 下面开始寻找, 如果数据足够的话
-	if (comng->cnt < comng->cap) {
+	if (sco->cnt < sco->cap) {
 		// 当循环队列去查找
-		int idx = comng->idx;
+		int idx = sco->idx;
 		do {
 			if (NULL == cos[idx]) {
 				cos[idx] = co;
-				++comng->cnt;
-				++comng->idx;
+				++sco->cnt;
+				++sco->idx;
 				return idx;
 			}
 			idx = (idx + 1) % cap;
-		} while (idx != comng->idx);
+		} while (idx != sco->idx);
 
-		assert(idx == comng->idx);
+		assert(idx == sco->idx);
 		return -1;
 	}
 
@@ -122,11 +113,11 @@ sco_create(void * sco, sco_f func, void * arg) {
 	cos = realloc(cos, sizeof(struct sco *) * cap * 2);
 	assert(NULL != cos);
 	memset(cos + cap, 0, sizeof(struct sco *) * cap);
-	comng->cos = cos;
-	comng->cap = cap << 1;
-	++comng->cnt;
-	cos[comng->idx] = co;
-	return comng->idx++;
+	sco->cos = cos;
+	sco->cap = cap << 1;
+	++sco->cnt;
+	cos[sco->idx] = co;
+	return sco->idx++;
 }
 
 static inline VOID WINAPI _sco_main(LPVOID ptr) {
@@ -140,87 +131,63 @@ static inline VOID WINAPI _sco_main(LPVOID ptr) {
 	// 跳转到主纤程体中销毁
 	SwitchToFiber(comng->main);
 }
-/*
- * 通过协程id激活协程
- *	sco		: 协程系统管理器
- *	id		: 具体协程id, sco_create 返回的协程id
- */
-void 
-sco_resume(void * sco, int id) {
+
+//
+// sco_resume - 通过协程id激活协程
+// sco		: 协程系统管理器
+// id		: 具体协程id, sco_create 返回的协程id
+//
+void
+sco_resume(scomng_t sco, int id) {
 	struct sco * co;
-	struct scomng * comng = sco;
 	int running;
 
-	assert(comng && id >= 0 && id < comng->cap);
+	assert(sco && id >= 0 && id < sco->cap);
 
 	// _SCO_DEAD 状态协程, 完全销毁其它协程操作
-	running = comng->running;
+	running = sco->running;
 	if (running != -1) {
-		co = comng->cos[running];
+		co = sco->cos[running];
 		assert(co && co->status == _SCO_DEAD);
-		comng->cos[running] = NULL;
-		--comng->cnt;
-		comng->idx = running;
-		comng->running = -1;
+		sco->cos[running] = NULL;
+		--sco->cnt;
+		sco->idx = running;
+		sco->running = -1;
 		_sco_delete(co);
 		if (running == id)
 			return;
 	}
 
 	// 下面是协程 _SCO_READY 和 _SCO_SUSPEND 处理
-	co = comng->cos[id];
+	co = sco->cos[id];
 	if ((!co) || (co->status != _SCO_READY && co->status != _SCO_SUSPEND))
 		return;
 
 	// Window特性创建纤程, 并保存当前上下文环境, 切换到创建的纤程环境中
 	if (co->status == _SCO_READY)
-		co->ctx = CreateFiberEx(_INT_STACK, 0, FIBER_FLAG_FLOAT_SWITCH, _sco_main, comng);
+		co->ctx = CreateFiberEx(_INT_STACK, 0, FIBER_FLAG_FLOAT_SWITCH, _sco_main, sco);
 
 	co->status = _SCO_RUNNING;
-	comng->running = id;
-	comng->main = GetCurrentFiber();
+	sco->running = id;
+	sco->main = GetCurrentFiber();
 	// 正常逻辑切换到创建的子纤程中
 	SwitchToFiber(co->ctx);
 }
 
-/*
- * 关闭当前正在运行的协程, 让协程处理暂停状态
- *	sco		: 协程系统管理器
- */
-void 
-sco_yield(void * sco) {
+//
+// sco_yield - 关闭当前正在运行的协程, 让协程处理暂停状态
+// sco		: 协程系统管理器
+//
+void
+sco_yield(scomng_t sco) {
 	struct sco * co;
-	struct scomng * comng = sco;
-	int id = comng->running;
-	if ((id < 0 || id >= comng->cap) || !(co = comng->cos[id]))
+	int id = sco->running;
+	if ((id < 0 || id >= sco->cap) || !(co = sco->cos[id]))
 		return;
 	co->status = _SCO_SUSPEND;
-	comng->running = -1;
+	sco->running = -1;
 	co->ctx = GetCurrentFiber();
-	SwitchToFiber(comng->main);
+	SwitchToFiber(sco->main);
 }
 
-/*
- * 得到当前协程状态
- *	sco		: 协程系统管理器
- *	id		: 协程id
- *			: 返回 _SCO_* 相关的协程状态信息
- */
-inline int 
-sco_status(void * sco, int id) {
-	struct scomng * comng = sco;
-	assert(comng && id >= 0 && id < comng->cap);
-	return comng->cos[id] ? comng->cos[id]->status : _SCO_DEAD;
-}
-
-/*
- * 当前协程系统中运行的协程id
- *	sco		: 协程系统管理器
- *			: 返回 < 0 表示没有协程在运行
- */
-inline int 
-sco_running(void * sco) {
-	return ((struct scomng *)sco)->running;
-}
-
-#endif // !_H_SCOROUTINE$WINDS
+#endif // !_H_SIMPLEC_SCOROUTINE$WINDS

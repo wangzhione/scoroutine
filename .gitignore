@@ -1,51 +1,35 @@
-##gnore this file##
-/logs/
-*.log.wf
-__*
+# Ignore the uploaded folders
+/.vs
+/logs
+/Debug
+/Output
+/Release
+/*/x64
+/*/logs
+/*/Debug
+/*/Release
+
+# Ignore the uploaded files
+-p
+~*
 *~
-/target/
-/.vs/
-##filter databfile、sln file、configureFile##
-*.mdb  
-*.ldb  
-*.config   
-##class file##
-*.com  
-class  
-*.exe  
-*.o  
-*.so  
-# compression file
-*.7z  
-*.dmg  
-*.gz  
-*.iso  
-*.jar  
-*.rar  
-*.tar  
-*.zip  
-*.via
-*.tmp
-*.err
-# Logs and databases #  
-*.log  
-*.sql  
-*.sqlite  
-# OS generated files #  
-.DS_Store  
-.DS_Store?  
-._*  
-.Spotlight-V100  
-.Trashes  
-Icon?  
-ehthumbs.db  
-Thumbs.db 
-*.opendb
-*.sdf
-*.VC.*
-*.tlog
-*.obj
+*.db
+*.suo
+*.swp
+*.swo
+*.exe
+*.out
 *.pdb
-*.idb
+*.pch
 *.ilk
-/coroutine/Debug
+*.log
+*.err
+*.out
+*.obj
+*.idb
+*.TMP
+.*.swo
+*.iobj
+*.ipdb
+*.tlog
+*.opendb
