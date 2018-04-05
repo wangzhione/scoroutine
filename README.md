@@ -1,19 +1,33 @@
-## scoroutine 一个跨平台协程库
+## coroutine 跨平台协程玩耍库
 
-    * main.c              --  测试代码
+    * main.c              --  测试主逻辑
     * scoroutine.h        --  协程库接口
     * scoroutine.c        --  协程库实现
-    * scoroutine$linux.h  --  linux上实现协程库特定接口
-    * scoroutine$winds.h  --  winds上实现协程库特定接口
+    * scoroutine$linux.h  --  linux 局部实现
+    * scoroutine$winds.h  --  winds 局部实现
 
-## 编译说明
-    Winds 使用 VS2015/VS2017 打开 sln 文件就可以, 推荐用Best new cl and nmae
-    Linux 上 need GCC , 随后 Makefile 就可以使用了
+### 编译说明
+
+    Winds 使用 Best new CL 操作 sln 文件就可以
+    Linux 上 need GCC , 随后 Makefile 就 OK
   
-## 补充扯淡
-    采用 $ 命名文件, 意图就是表示 , 当前文件是私有(局部)的文件, 不推荐使用.
-    而 $ 字符是C中变量命名一个"特殊"字符, 个人感觉比 __ or - 这些命令要好看些.
+### 扯淡这是
+
+    采用 $ 命名文件.
+    意图是, 表明当前文件是私有(局部)的, 不推荐使用.
+    而 $ 字符是 C 中变量命名一个"特殊"字符, 比 _ __ or - 这些, 要更贴合编译器.
     
-    更加详细版本 可以追踪下面地址 * 在 simplec scoroutine 协程库中更新
-    
->>>[simplec scoroutine](https://github.com/wangzhione/simplec/blob/master/simplec/module/service/include/scoroutine.h)
+    scoroutine 协程库比较简单, 适合学习了解这个编程的 `协程` 时代
+
+最初的思路来自 -> 
+[coroutine](https://github.com/cloudwu/coroutine)
+
+***
+
+#### 还是写代码有意思
+
+***
+
+[你在他乡还好吗](http://music.163.com/m/song?id=89863&userid=16529894)
+
+    (:) 0.o

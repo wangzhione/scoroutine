@@ -1,29 +1,28 @@
 ﻿# 全局替换变量
-CC = gcc 
+CC     = gcc 
 CFLAGS = -g -Wall -O2 
-RUNE = $(CC) $(CFLAGS) -o $@ $^
+RUNE   = $(CC) $(CFLAGS) -o $@ $^
 
 # 声明路径变量
-SRC_PATH := ./coroutine
-TAR_PATH := ./Debug
+DSRC   = coroutine
+DTAR   = Debug
 
 # 构建伪命令
-.PHONY:all clean cleanall
+.PHONY : all clean
 
-# 第一个标签, 是make的开始
-all:$(TAR_PATH)/main.out
+# 第一个标签, 是 make 的开始
+all : $(DTAR)/main.exe
 
-$(TAR_PATH)/main.out:main.o scoroutine.o
-	$(CC) $(CFLAGS) -o $@ $(addprefix $(TAR_PATH)/, $^ )
-
-$(TAR_PATH):
-	mkdir $@
+$(DTAR)/main.exe : main.o scoroutine.o
+	$(CC) $(CFLAGS) -o $@ $(addprefix $(DTAR)/, $^)
 	
-%.o:$(SRC_PATH)/%.c | $(TAR_PATH)
-	$(CC) $(CFLAGS) -c -o $(TAR_PATH)/$@ $<
+%.o : $(DSRC)/%.c | $(DTAR)
+	$(CC) $(CFLAGS) -c -o $(DTAR)/$@ $<
+
+$(DTAR) :
+	-mkdir -p $(DTAR)
 	
 # 清除操作
-clean:
-	-rm -rf $(TAR_PATH)/*.i $(TAR_PATH)/*.s $(TAR_PATH)/*.o $(TAR_PATH)/*~
-cleanall:clean
-	-rm -rf $(TAR_PATH)
+clean :
+	-rm -rf $(DTAR) Release x64
+	-rm -rf $(DSRC)/Debug $(DSRC)/Release $(DSRC)/x64
