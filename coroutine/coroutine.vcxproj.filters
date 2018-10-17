@@ -4,9 +4,11 @@
     <ClInclude Include="scoroutine%24linux.h" />
     <ClInclude Include="scoroutine%24winds.h" />
     <ClInclude Include="scoroutine.h" />
+    <ClInclude Include="coroutine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scoroutine.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="coroutine.c" />
   </ItemGroup>
 </Project>
