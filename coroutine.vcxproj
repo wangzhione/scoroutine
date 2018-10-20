@@ -117,15 +117,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="coroutine$linux.h" />
+    <ClInclude Include="coroutine$winds.h" />
     <ClInclude Include="coroutine.h" />
-    <ClInclude Include="scoroutine%24linux.h" />
-    <ClInclude Include="scoroutine%24winds.h" />
-    <ClInclude Include="scoroutine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="coroutine.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="scoroutine.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,14 @@
 ﻿#ifndef _H_COROUTINE
 #define _H_COROUTINE
 
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+
+// 默认协程栈大小 和 初始化协程数量
+#define INT_STACK       (1048576)
+#define INT_COROUTINE   (16)
+
 // comng_t - 协程管理对象
 typedef struct comng * comng_t;
 

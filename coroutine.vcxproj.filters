@@ -1,13 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="scoroutine%24linux.h" />
-    <ClInclude Include="scoroutine%24winds.h" />
-    <ClInclude Include="scoroutine.h" />
     <ClInclude Include="coroutine.h" />
+    <ClInclude Include="coroutine$linux.h" />
+    <ClInclude Include="coroutine$winds.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="scoroutine.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="coroutine.c" />
   </ItemGroup>
