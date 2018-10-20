@@ -31,7 +31,7 @@ inline struct co * co_new(co_f func, void * arg) {
     return c;
 }
 
-// co_delete - 销毁一个协程对象
+// co_die - 销毁一个协程对象
 inline void co_die(struct co * c) {
     free(c->stack);
     free(c);
