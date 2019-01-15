@@ -171,36 +171,38 @@ co_create(comng_t g, co_f func, void * arg) {
 //
 void 
 co_resume(comng_t g, int id) {
-    uintptr_t ptr;
-    struct co * c;
     int status, running = g->running;
     assert(running == -1 && id >= 0 && id < g->cap);
 
     // 下面是协程 CO_READY 和 CO_SUSPEND 处理
-    c = g->cs[id];
+    struct co * c = g->cs[id];
     if ((!c) || (status = c->status) == CO_DEAD)
         return;
 
     g->running = id;
     c->status = CO_RUNNING;
     switch (status) {
-    case CO_READY:
-        // 兼容 x64 指针通过 makecontext 传入
-        ptr = (uintptr_t)g;
-        // 构建栈和运行链
+    case CO_READY: {
+        // 兼容 x64 指针通过2个 4 字节传入到 makecontext 中
+        uintptr_t ptr = (uintptr_t)g;
+        uint32_t l32 = (uint32_t)ptr;
+        uint32_t h32 = (uint32_t)(ptr >> 32);
+
+        // 构建栈和上下文环境运行链
         getcontext(&c->ctx);
         c->ctx.uc_link = &g->ctx;
         c->ctx.uc_stack.ss_sp = g->stack;
         c->ctx.uc_stack.ss_size = STACK_INT;
-        makecontext(&c->ctx, (void(*)())co_run, 2, (uint32_t)ptr, (uint32_t)(ptr >> 32));
+        makecontext(&c->ctx, (void(*)())co_run, 2, l32, h32);
         // 保存当前运行状态到 g->ctx, 然后跳转到 co->ctx 运行环境中
         swapcontext(&g->ctx, &c->ctx);
-        break;
+    }
+    break;
     case CO_SUSPEND:
         // stack add is high -> low
         memcpy(g->stack + STACK_INT - c->size, c->stack, c->size);
         swapcontext(&g->ctx, &c->ctx);
-        break;
+    break;
     default:
         assert(c->status && 0);
     }
@@ -213,11 +215,11 @@ co_resume(comng_t g, int id) {
 //
 void 
 co_yield(comng_t g) {
-    struct co * c;
     int id = g->running;
-    if ((id < 0) || (id >= g->cap) || !(c = g->cs[id]))
+    if (id < 0 || id >= g->cap || !g->cs[id])
         return;
 
+    struct co * c = g->cs[id];
     assert((char *)&c > g->stack);
     co_savestack(c, g->stack + STACK_INT);
 
