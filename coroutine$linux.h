@@ -1,8 +1,13 @@
-﻿#if !defined(COROUTINE$LINE_H) && defined(__linux__)
+﻿#if !defined(COROUTINE$LINE_H) && !defined(_WIN32)
 #define COROUTINE$LINE_H
 
 #include "coroutine.h"
-#include <ucontext.h>
+
+#if defined(__linux__)
+#  include <ucontext.h>
+#else
+#  include <sys/ucontext.h>
+#endif
 
 // 声明 co - 协程结构 和 comng - 协程管理器结构
 struct co {
