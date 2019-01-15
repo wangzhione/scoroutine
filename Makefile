@@ -8,7 +8,7 @@ DTAR   = Debug
 # 构建伪命令
 .PHONY : all clean
 
-# 第一个标签, 是 make 的开始
+# make 开始的标签
 all : $(DTAR)/main.exe
 
 $(DTAR)/main.exe : main.o coroutine.o
