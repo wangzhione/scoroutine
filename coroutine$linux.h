@@ -12,8 +12,8 @@ struct co {
     ucontext_t ctx;         // 当前协程运行的上下文环境
 
     char * stack;           // 当前协程栈指针
-    int cap;                // 当前栈的容量
-    int len;                // 当前栈使用该长度
+    ptrdiff_t cap;          // 当前栈的容量
+    ptrdiff_t size;         // 当前栈使用大小
 };
 
 // co_new - 构建 struct co 协程对象
@@ -25,7 +25,7 @@ inline struct co * co_new(co_f func, void * arg) {
     c->status = CO_READY;
 
     c->stack = NULL;
-    c->cap = c->len = 0;
+    c->cap = c->size = 0;
     return c;
 }
 
@@ -36,18 +36,18 @@ inline void co_die(struct co * c) {
 }
 
 // co_savestack 保存当前运行的栈信息
-inline void co_savestack(struct co * c, char * top) {
+static inline void co_savestack(struct co * c, char * top) {
     // x86 CPU 栈从高位向低位增长
     char dummy = 0;
-    ptrdiff_t len = top - &dummy;
-    assert(len <= STACK_INT);
-    if (c->cap < len) {
+    ptrdiff_t size = top - &dummy;
+    assert(size <= STACK_INT);
+    if (c->cap < size) {
         free(c->stack);
-        c->stack = malloc(c->cap = len);
+        c->stack = malloc(c->cap = size);
         assert(c->stack);
     }
-    c->len = len;
-    memcpy(c->stack, &dummy, len);
+    c->size = size;
+    memcpy(c->stack, &dummy, size);
 }
 
 struct comng {
@@ -193,7 +193,7 @@ co_resume(comng_t g, int id) {
         break;
     case CO_SUSPEND:
         // stack add is high -> low
-        memcpy(g->stack + STACK_INT - c->len, c->stack, c->len);
+        memcpy(g->stack + STACK_INT - c->size, c->stack, c->size);
         swapcontext(&g->ctx, &c->ctx);
         break;
     default:
