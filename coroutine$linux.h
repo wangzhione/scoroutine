@@ -1,5 +1,5 @@
-﻿#if !defined(COROUTINE$LINE_H) && !defined(_WIN32)
-#define COROUTINE$LINE_H
+﻿#if !defined(_COROUTINE$LINUX_H) && !defined(_WIN32)
+#define _COROUTINE$LINUX_H
 
 #include "coroutine.h"
 
@@ -250,4 +250,4 @@ inline int co_status(comng_t g, int id) {
     return g->cs[id] ? g->cs[id]->status : CO_DEAD;
 }
 
-#endif//COROUTINE$LINE_H
+#endif//_COROUTINE$LINUX_H

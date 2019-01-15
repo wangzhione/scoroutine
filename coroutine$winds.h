@@ -1,5 +1,5 @@
-﻿#if  !defined(COROUTINE$WINDS_H) && defined(_WIN32)
-#define COROUTINE$WINDS_H
+﻿#if  !defined(_COROUTINE$WINDS_H) && defined(_WIN32)
+#define _COROUTINE$WINDS_H
 
 #include <windows.h>
 #include "coroutine.h"
@@ -219,4 +219,4 @@ inline int co_status(comng_t g, int id) {
     return g->cs[id] ? g->cs[id]->status : CO_DEAD;
 }
 
-#endif//COROUTINE$WINDS_H
+#endif//_COROUTINE$WINDS_H

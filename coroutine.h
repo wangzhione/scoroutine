@@ -1,5 +1,5 @@
-﻿#ifndef COROUTINE_H
-#define COROUTINE_H
+﻿#ifndef _COROUTINE_H
+#define _COROUTINE_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -76,4 +76,4 @@ extern int co_running(comng_t g);
 //
 extern int co_status(comng_t g, int id);
 
-#endif//COROUTINE_H
+#endif//_COROUTINE_H
