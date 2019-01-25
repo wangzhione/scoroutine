@@ -41,7 +41,7 @@ inline void co_die(struct co * c) {
 }
 
 // co_savestack 保存当前运行的栈信息
-static inline void co_savestack(struct co * c, char * top) {
+static void co_savestack(struct co * c, char * top) {
     // x86 CPU 栈从高位向低位增长
     char dummy = 0;
     ptrdiff_t size = top - &dummy;
@@ -66,8 +66,8 @@ struct comng {
     char stack[STACK_INT];  // 当前协程集中用的栈
 };
 
-// co_run - 协程运行的主体
-static void co_run(uint32_t l32, uint32_t h32) {
+// comng_run - 协程运行的主体
+static void comng_run(uint32_t l32, uint32_t h32) {
     uintptr_t ptr = (uintptr_t)l32 | ((uintptr_t)h32 << 32);
     struct comng * g = (struct comng *)ptr;
     int id = g->running;
@@ -193,7 +193,7 @@ co_resume(comng_t g, int id) {
         c->ctx.uc_link = &g->ctx;
         c->ctx.uc_stack.ss_sp = g->stack;
         c->ctx.uc_stack.ss_size = STACK_INT;
-        makecontext(&c->ctx, (void(*)())co_run, 2, l32, h32);
+        makecontext(&c->ctx, (void(*)())comng_run, 2, l32, h32);
         // 保存当前运行状态到 g->ctx, 然后跳转到 co->ctx 运行环境中
         swapcontext(&g->ctx, &c->ctx);
     }
@@ -230,12 +230,12 @@ co_yield(comng_t g) {
 }
 
 //
-// co_running - 获取正在运行的协程 id
+// comng_running - 获取正在运行的协程 id
 // g        : 协程系统管理器
 // retrunr  : < 0 表示没有协程在运行
 //
 inline int 
-co_running(comng_t g) {
+comng_running(comng_t g) {
     return g->running;
 }
 
