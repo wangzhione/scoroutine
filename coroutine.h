@@ -55,7 +55,7 @@ extern int co_create(comng_t g, co_f func, void * arg);
 extern void co_resume(comng_t g, int id);
 
 //
-// co_yield - 暂停正在运行的协程
+// co_yield - 挂起正在运行的协程
 // g        : 协程管理器对象
 // return   : void
 //
