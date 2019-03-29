@@ -183,7 +183,7 @@ co_resume(comng_t g, int id) {
     c->status = CO_RUNNING;
     switch (status) {
     case CO_READY: {
-        // 兼容 x64 指针通过2个 4 字节传入到 makecontext 中
+        // 兼容 x64 指针通过 2 个 4 字节传入到 makecontext 中
         uintptr_t ptr = (uintptr_t)g;
         uint32_t l32 = (uint32_t)ptr;
         uint32_t h32 = (uint32_t)(ptr >> 32);

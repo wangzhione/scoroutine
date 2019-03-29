@@ -11,10 +11,10 @@
 #define STACK_INT       (1048576)
 #define COROUTINE_INT   (16)
 
-#define CO_DEAD         (0) // 协程死亡状态
-#define CO_READY        (1) // 协程已经就绪
-#define CO_RUNNING      (2) // 协程正在运行
-#define CO_SUSPEND      (3) // 协程暂停等待
+#define CO_DEAD         (0)     // 协程死亡状态
+#define CO_READY        (1)     // 协程已经就绪
+#define CO_RUNNING      (2)     // 协程正在运行
+#define CO_SUSPEND      (3)     // 协程暂停等待
 
 // comng_t - 协程管理器对象
 typedef struct comng * comng_t;
